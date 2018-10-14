@@ -2,8 +2,10 @@ import ../data/data
 import ../draw/draw
 import ../plot/plot
 import sequtils
+import strutils
 import math
 import json
+import csvtools
 
 var flat = newSeq[tuple[key: string, value: JsonNode]](0)
 
@@ -16,20 +18,8 @@ type
     loadJSONFileImpl*: proc(c: Chart, f: string, v: varargs[string])
     loadDataTableImpl*: proc(c: Chart, d: DataTable)
     loadHeatmapTableImpl*: proc(c: Chart, h: HeatmapTable)
-  
-# Chart interface
-proc csv*(c: Chart, f: string, v: varargs[string]) =
-  c.loadCSVFileImpl(c, f, v)
 
-proc json*(c: Chart, f: string, v: varargs[string]) =
-  c.loadJSONFileImpl(c, f, v)
-
-proc table*(c: Chart, d: DataTable) =
-  c.loadDataTableImpl(c, d)
-
-proc heat*(c: Chart, h: HeatmapTable) =
-  c.loadHeatmapTableImpl(c, h)
-
+# Utilities
 proc flatten(node: JsonNode) =
   for key, subNode in node:
     case subNode.kind
@@ -44,23 +34,43 @@ proc flatten(node: JsonNode) =
         flat.add((key, subNode))
     else:
       flat.add((key, subNode))
+  
+# Chart interface
+proc csv*(c: Chart, f: string, v: varargs[string]) =
+  c.loadCSVFileImpl(c, f, v)
+
+proc json*(c: Chart, f: string, v: varargs[string]) =
+  c.loadJSONFileImpl(c, f, v)
+
+proc table*(c: Chart, d: DataTable) =
+  c.loadDataTableImpl(c, d)
+
+proc heat*(c: Chart, h: HeatmapTable) =
+  c.loadHeatmapTableImpl(c, h)
 
 # BarChart implementation
+proc bcCSV(c: Chart, f: string, v: varargs[string]) =
+  let csv = toSeq(csvRows(f))
+  var d = newDataTable()
+  d.addColumns(csv[0])
+  d.addRow(csv[1].mapIt(float64, parseFloat(it)))
+  c.plot.draw(d)
+
 proc bcJson(c: Chart, f: string, v: varargs[string]) =
-  var jnode = parseFile(f)
+  let jnode = parseFile(f)
   flatten(jnode)
   var d = newDataTable()
   var cols = newSeq[string](0)
-  var rows = newSeq[float64](0)
+  var row = newSeq[float64](0)
   for i in filterIt(flat, it.key == v[0]):
-    rows.add(getFloat(i.value))
-  d.addRow(rows)
+    row.add(getFloat(i.value))
+  d.addRow(row)
   if v.len > 1:
     for i in filterIt(flat, it.key == v[1]):
       cols.add(getStr(i.value))
     d.addColumns(cols)
   else:
-    for i in 0..<len(rows):
+    for i in 0..<len(row):
       d.addColumn($i)
   c.plot.draw(d)
   flat.setLen(0)
@@ -78,6 +88,7 @@ type
 proc newBarChart*(box: Box = Box(width: 100, height:20)): BarChart =
   new(result)
   result.plot = newBarPlot(box)
+  result.loadCSVFileImpl = bcCSV
   result.loadJSONFileImpl = bcJson
   result.loadDataTableImpl = bcLoadDataTable
   result.loadHeatmapTableImpl = bcLoadHeatmap
@@ -85,6 +96,7 @@ proc newBarChart*(box: Box = Box(width: 100, height:20)): BarChart =
 when isMainModule:
   var a = newBarChart()
   var b = newBarChart()
+  var c = newBarChart()
   a.json("test.json", "Count")
   echo $a.plot
 
@@ -93,3 +105,6 @@ when isMainModule:
   stuff.addRow([1'f64, 2, 3])
   b.table(stuff)
   echo $b.plot
+
+  c.csv("test.csv")
+  echo $c.plot
