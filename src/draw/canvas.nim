@@ -90,7 +90,7 @@ template writeCenter*(c: Canvas, y, x: int, r: openArray[Rune]) =
 proc line*(c: Canvas, x0, y0, x1, y1: int) =
   c.lineImpl(c, x0, y0, x1, y1)
 
-# StdCanvas implementations
+# Default implementations
 proc stdSize(c: Canvas): Box =
   c.buffer.box
 
@@ -152,7 +152,7 @@ proc newStdCanvas*(box: Box = Box(width: 100, height:20)): StdCanvas =
   result.setUniformRowSliceImpl = stdSetUniformRowSlice
   result.lineImpl = stdLine
 
-# BrailleCanvas-specific implementation
+# BrailleCanvas implementation
 const
   brailleScaleX* = 2
   brailleScaleY* = 4
@@ -206,7 +206,7 @@ proc newBrailleCanvas*(box: Box = Box(width: 100, height:20)): BrailleCanvas=
   result.setUniformRowSliceImpl = stdSetUniformRowSlice
   result.lineImpl = bcLine
 
-# HeatmapCanvas-specific implementation
+# HeatmapCanvas implementation
 proc hcClear(c: Canvas) =
   c.buffer.fill(SHADES[0])
 
@@ -230,7 +230,7 @@ proc newHeatmapCanvas*(box: Box = Box(width: 100, height:20)): HeatmapCanvas=
   result.setUniformColSliceImpl = stdSetUniformColSlice
   result.setUniformRowSliceImpl = stdSetUniformRowSlice
 
-# QuarterCanvas-specific implementation
+# QuarterCanvas implementation
 const
   quarterScale* = 2
 

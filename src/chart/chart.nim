@@ -36,6 +36,9 @@ proc flatten(node: JsonNode) =
       flat.add((key, subNode))
   
 # Chart interface
+proc `$`*(c: Chart): string =
+  c.stringImpl(c)
+
 proc csv*(c: Chart, f: string, v: varargs[string]) =
   c.loadCSVFileImpl(c, f, v)
 
@@ -47,6 +50,10 @@ proc table*(c: Chart, d: DataTable) =
 
 proc heat*(c: Chart, h: HeatmapTable) =
   c.loadHeatmapTableImpl(c, h)
+
+# Default implementation
+proc stdString(c: Chart): string =
+  $c.plot
 
 # BarChart implementation
 proc bcCSV(c: Chart, f: string, v: varargs[string]) =
@@ -88,6 +95,7 @@ type
 proc newBarChart*(box: Box = Box(width: 100, height:20)): BarChart =
   new(result)
   result.plot = newBarPlot(box)
+  result.stringImpl = stdString
   result.loadCSVFileImpl = bcCSV
   result.loadJSONFileImpl = bcJson
   result.loadDataTableImpl = bcLoadDataTable
@@ -98,13 +106,10 @@ when isMainModule:
   var b = newBarChart()
   var c = newBarChart()
   a.json("test.json", "Count")
-  echo $a.plot
+  echo $a
 
   var stuff = newDataTable()
   stuff.addColumns(["Hats", "Knuckleheads", "Skull & Bones"])
   stuff.addRow([1'f64, 2, 3])
   b.table(stuff)
-  echo $b.plot
-
-  c.csv("test.csv")
-  echo $c.plot
+  echo $b

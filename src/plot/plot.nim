@@ -84,7 +84,7 @@ proc `$`*(p: Plot): string =
 proc draw*(p: Plot, table: DataTable) =
   p.drawImpl(p, table)
 
-# Standard implementation
+# Default implementation
 proc stdString(p: Plot): string =
   $p.canvas
 
