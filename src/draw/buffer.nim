@@ -9,10 +9,10 @@ type
     runes*: seq[seq[Rune]]
     box*: Box
 
-func fill*(self: Buffer, r: Rune) =
-  for i, _ in self.runes:
-    for j, _ in self.runes[i]:
-      self.runes[i][j] = r
+func fill*(b: Buffer, r: Rune) =
+  for i, _ in b.runes:
+    for j, _ in b.runes[i]:
+      b.runes[i][j] = r
 
 func newBuffer*(size: Box): Buffer =
   result = Buffer()
@@ -20,55 +20,55 @@ func newBuffer*(size: Box): Buffer =
   result.runes = newSeqWith(result.box.height, 
     newSeq[Rune](result.box.width))
 
-func `[]`*(self: Buffer, y, x: int): Rune =
-  if y < 0 or y >= self.box.height:
+func `[]`*(b: Buffer, y, x: int): Rune =
+  if y < 0 or y >= b.box.height:
     return cast[Rune](0)
-  if x < 0 or y >= self.box.width:
+  if x < 0 or y >= b.box.width:
     return cast[Rune](0)
-  self.runes[y][x]
+  b.runes[y][x]
 
-func `[]=`*(self: Buffer, y, x: int, r: Rune) =
-  self.runes[y][x] = r
+func `[]=`*(b: Buffer, y, x: int, r: Rune) =
+  b.runes[y][x] = r
 
-func `[]=`*(self: Buffer, y: int, slice: HSlice[int, int], r: Rune) =
+func `[]=`*(b: Buffer, y: int, slice: HSlice[int, int], r: Rune) =
   for i in slice:
-    self.runes[y][i] = r
+    b.runes[y][i] = r
 
-func `[]=`*(self: Buffer, slice: HSlice[int, int], x: int, r: Rune) =
+func `[]=`*(b: Buffer, slice: HSlice[int, int], x: int, r: Rune) =
   for i in slice:
-    self.runes[i][x] = r
+    b.runes[i][x] = r
 
-func setOr*(self: Buffer, y, x: int, r: Rune) =
-  if y < 0 or y >= self.box.height:
+func setOr*(b: Buffer, y, x: int, r: Rune) =
+  if y < 0 or y >= b.box.height:
     return
-  if x < 0 or x >= self.box.width:
+  if x < 0 or x >= b.box.width:
     return
-  self.runes[y][x] = Rune(int32(self.runes[y][x]) or int32(r))
+  b.runes[y][x] = Rune(int32(b.runes[y][x]) or int32(r))
 
-func write*(self: Buffer, y, x: int, r: openArray[Rune]) =
-  if y < 0 or y > self.box.height:
+func write*(b: Buffer, y, x: int, r: openArray[Rune]) =
+  if y < 0 or y > b.box.height:
     return
   for i in 0..r.high:
     var xi = x + i
-    if xi < 0 or xi >= self.box.width:
+    if xi < 0 or xi >= b.box.width:
       continue
-    self.runes[y][xi] = r[i]
+    b.runes[y][xi] = r[i]
 
-template writeLeft*(self: Buffer, y, x: int, r: openArray[Rune]) =
-  self.write(y, x - len(r), r)
+template writeLeft*(b: Buffer, y, x: int, r: openArray[Rune]) =
+  b.write(y, x - len(r), r)
 
-template writeRight*(self: Buffer, y, x: int, r: openArray[Rune]) =
-  self.write(y, x, r)
+template writeRight*(b: Buffer, y, x: int, r: openArray[Rune]) =
+  b.write(y, x, r)
 
-template writeCenter*(self: Buffer, y, x: int, r: openArray[Rune]) =
-  self.write(y, x - len(r) div 2, r)
+template writeCenter*(b: Buffer, y, x: int, r: openArray[Rune]) =
+  b.write(y, x - len(r) div 2, r)
 
-func `$`*(self: Buffer): string =
+func `$`*(b: Buffer): string =
   result = ""
-  for i, _ in self.runes:
-    var row = self.runes[(self.box.height - i - 1)]
+  for i, _ in b.runes:
+    var row = b.runes[(b.box.height - i - 1)]
     result &= join(row)
-    if i < self.box.height - 1:
+    if i < b.box.height - 1:
       result &= "\n"
 
 when isMainModule:

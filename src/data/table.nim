@@ -5,24 +5,24 @@ type
     columns*: seq[string]
     rows*: seq[seq[float64]]
 
-func addColumn*(self: DataTable, name: string) =
-  self.columns.add(name)
+func addColumn*(d: DataTable, name: string) =
+  d.columns.add(name)
 
-func addColumns*(self: DataTable, names: openarray[string]) =
+func addColumns*(d: DataTable, names: openarray[string]) =
   for i in names:
-    self.columns.add(i)
+    d.columns.add(i)
 
-func addRowV*(self: DataTable, v: varargs[float64]) =
+func addRowV*(d: DataTable, v: varargs[float64]) =
   var temp: seq[float64] = @[]
   for i in v:
     temp.add(i)
-  self.rows.add(temp)
+  d.rows.add(temp)
 
-func addRow*(self: DataTable, v: openarray[float64]) =
+func addRow*(d: DataTable, v: openarray[float64]) =
   var temp: seq[float64] = @[]
   for i in v:
     temp.add(i)
-  self.rows.add(temp)
+  d.rows.add(temp)
 
 func newDataTable*(): DataTable =
   result = DataTable()

@@ -29,11 +29,11 @@ type
     x*: Bins
     y*: Bins
 
-func `$`*(self: Bin): string =
-  if self.rightInclusive:
-    "[$1,$2]" % [ff(self.leftInclusive), ff(self.right)]
+func `$`*(b: Bin): string =
+  if b.rightInclusive:
+    "[$1,$2]" % [ff(b.leftInclusive), ff(b.right)]
   else:
-    "[$1,$2)" % [ff(self.leftInclusive), ff(self.right)]
+    "[$1,$2)" % [ff(b.leftInclusive), ff(b.right)]
 
 func binsSqrt*(numPoints: int): int =
   int(sqrt(float64(numPoints)))
@@ -53,28 +53,28 @@ func newBins*(points: openArray[float64]): Bins =
     result.min = min(result.min, x)
     result.max = max(result.max, x)
 
-func left*(self: Bins, i: int): float64 =
-  self.min + ((self.max - self.min) / float64(self.num) * float64(i))
+func left*(b: Bins, i: int): float64 =
+  b.min + ((b.max - b.min) / float64(b.num) * float64(i))
 
-template right*(self: Bins, i: int): float64 =
-  self.left(i + 1)
+template right*(b: Bins, i: int): float64 =
+  b.left(i + 1)
 
-func all*(self: Bins): seq[Bin] =
+func all*(b: Bins): seq[Bin] =
   result = @[]
-  if self.max == self.min:
-    self.num = 1
-  for i in 0..<self.num:
+  if b.max == b.min:
+    b.num = 1
+  for i in 0..<b.num:
     result.add(Bin(
-      leftInclusive: self.left(i),
-      right: self.right(i)
+      leftInclusive: b.left(i),
+      right: b.right(i)
     ))
-  result[self.num - 1].rightInclusive = true
+  result[b.num - 1].rightInclusive = true
 
-func point*(self: Bins, x: float64): int =
-  if self.max == self.min:
+func point*(b: Bins, x: float64): int =
+  if b.max == b.min:
     result = 0
-  var i = int((x - self.min) / (self.max - self.min) * float64(self.num))
-  if i >= self.num:
+  var i = int((x - b.min) / (b.max - b.min) * float64(b.num))
+  if i >= b.num:
     dec i
   result = i
 
