@@ -229,16 +229,16 @@ proc spDraw(p: Plot, table: DataTable) =
   p.drawAxes(paddingX, minX, maxX, minY, maxY)
 
 type
-  ScatterPlot* = ref ScatterPlotObj
-  ScatterPlotObj* = object of Plot
+  ScatterplotPlot* = ref ScatterplotPlotObj
+  ScatterplotPlotObj* = object of Plot
 
-proc newScatterplot*(box: Box = Box(width: 100, height:20)): ScatterPlot =
+proc newScatterplotPlot*(box: Box = Box(width: 100, height:20)): ScatterplotPlot =
   new(result)
   result.canvas = newBrailleCanvas(box)
   result.stringImpl = stdString
   result.drawImpl = spDraw
 
-proc newScatterplot*(canvas: Canvas, box: Box = Box(width: 100, height:20)): ScatterPlot =
+proc newScatterplotPlot*(canvas: Canvas, box: Box = Box(width: 100, height:20)): ScatterplotPlot =
   new(result)
   result.canvas = canvas
   result.stringImpl = stdString
@@ -298,7 +298,7 @@ when isMainModule:
   myPlot3.draw(stuff3)
 
   randomize()
-  var myPlot4 = newScatterplot()
+  var myPlot4 = newScatterplotPlot()
   var stuff4 = newDataTable()
   stuff4.addColumns(["Happy", "Sad"])
   for i in 1..10:
