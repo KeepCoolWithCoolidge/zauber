@@ -170,9 +170,17 @@ type
   BarPlot* = ref BarPlotObj
   BarPlotObj* = object of Plot
 
-proc newBarPlot*(box: Box = Box(width: 100, height:20)): BarPlot =
+proc newBarPlot*(box: Box = Box(width: 100, height:20), canvasType: CanvasType = STANDARD): BarPlot =
   new(result)
-  result.canvas = newStdCanvas(box)
+  result.canvas = case canvasType
+                  of STANDARD:
+                    newStdCanvas(box)
+                  of BRAILLE:
+                    newBrailleCanvas(box)
+                  of HEATMAP:
+                    newHeatmapCanvas(box)
+                  of QUARTER:
+                    newQuarterCanvas(box)
   result.stringImpl = stdString
   result.drawImpl = bcDraw
 
@@ -202,9 +210,17 @@ type
   LinePlot* = ref LinePlotObj
   LinePlotObj* = object of Plot
 
-proc newLinePlot*(box: Box = Box(width: 100, height:20)): LinePlot =
+proc newLinePlot*(box: Box = Box(width: 100, height:20), canvasType: CanvasType = BRAILLE): LinePlot =
   new(result)
-  result.canvas = newBrailleCanvas(box)
+  result.canvas = case canvasType
+                  of STANDARD:
+                    newStdCanvas(box)
+                  of BRAILLE:
+                    newBrailleCanvas(box)
+                  of HEATMAP:
+                    newHeatmapCanvas(box)
+                  of QUARTER:
+                    newQuarterCanvas(box)
   result.stringImpl = stdString
   result.drawImpl = lcDraw
 
@@ -232,15 +248,22 @@ type
   ScatterplotPlot* = ref ScatterplotPlotObj
   ScatterplotPlotObj* = object of Plot
 
-proc newScatterplotPlot*(box: Box = Box(width: 100, height:20)): ScatterplotPlot =
+proc newScatterplotPlot*(box: Box = Box(width: 100, height:20), canvasType: CanvasType = BRAILLE): ScatterplotPlot =
   new(result)
-  result.canvas = newBrailleCanvas(box)
+  result.canvas = case canvasType
+                  of STANDARD:
+                    newStdCanvas(box)
+                  of BRAILLE:
+                    newBrailleCanvas(box)
+                  of HEATMAP:
+                    newHeatmapCanvas(box)
+                  of QUARTER:
+                    newQuarterCanvas(box)
   result.stringImpl = stdString
   result.drawImpl = spDraw
 
 proc newScatterplotPlot*(canvas: Canvas, box: Box = Box(width: 100, height:20)): ScatterplotPlot =
   new(result)
-  result.canvas = canvas
   result.stringImpl = stdString
   result.drawImpl = spDraw
 

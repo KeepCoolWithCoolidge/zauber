@@ -27,6 +27,11 @@ template lineProc(prefix: untyped): untyped =
         l_y0 += sy
 
 type
+  CanvasType* = enum
+    STANDARD,
+    BRAILLE,
+    HEATMAP,
+    QUARTER
   Canvas* = ref CanvasObj
   CanvasObj* = object of RootObj
     buffer*: Buffer
