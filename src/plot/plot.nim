@@ -224,12 +224,6 @@ proc newLinePlot*(box: Box = Box(width: 100, height:20), canvasType: CanvasType 
   result.stringImpl = stdString
   result.drawImpl = lcDraw
 
-proc newLinePlot*(canvas: Canvas, box: Box = Box(width: 100, height:20)): LinePlot =
-  new(result)
-  result.canvas = canvas
-  result.stringImpl = stdString
-  result.drawImpl = lcDraw
-
 # Scatterplot implementation
 proc spDraw(p: Plot, table: DataTable) =
   let (minX, maxX, minY, maxY) = minMax(table)
@@ -259,11 +253,6 @@ proc newScatterplotPlot*(box: Box = Box(width: 100, height:20), canvasType: Canv
                     newHeatmapCanvas(box)
                   of QUARTER:
                     newQuarterCanvas(box)
-  result.stringImpl = stdString
-  result.drawImpl = spDraw
-
-proc newScatterplotPlot*(canvas: Canvas, box: Box = Box(width: 100, height:20)): ScatterplotPlot =
-  new(result)
   result.stringImpl = stdString
   result.drawImpl = spDraw
 
@@ -299,7 +288,6 @@ proc newHeatmap*(box: Box = Box(width: 100, height:20)): HeatmapPlot =
 when isMainModule:
   import random
 
-  var myCanvas = newBrailleCanvas()
   var myPlot = newBarPlot()
   var stuff = newDataTable()
   stuff.addColumns(["Hats", "Knuckleheads", "Skull & Bones"])
@@ -313,7 +301,7 @@ when isMainModule:
     stuff2.addRow([float(i), float(i * i * i)])
   myPlot2.draw(stuff2)
 
-  var myPlot3 = newLinePlot(myCanvas)
+  var myPlot3 = newLinePlot(canvasType=BRAILLE)
   var stuff3 = newDataTable()
   stuff3.addColumns(["Cat", "Mouse"])
   for i in -100..100:
